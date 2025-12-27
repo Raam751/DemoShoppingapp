@@ -1,0 +1,177 @@
+Spring Boot Learning Notes - Building 'Gewa' Shopping App
+=========================================================
+
+1. Project Initialization (The Foundation)
+------------------------------------------
+- **Spring Initializr**: The tool used to bootstrap the project structure.
+- **pom.xml (Project Object Model)**:
+    - This is our "Shopping List" for the project.
+    - It tells Maven which external libraries (dependencies) to download.
+    - **Key Dependencies we added**:
+        - `spring-boot-starter-web`: Includes Tomcat server to run the app and handle web requests.
+        - `spring-boot-starter-data-jpa`: Allows Java code to interact with databases using the JPA standard.
+        - `h2`: An in-memory database. Great for learning/testing as it resets every time the app restarts.
+        - `lombok`: A helper library to reduce boilerplate code (auto-generates Getters, Setters, Constructors).
+
+2. Project Structure (The Blueprint)
+------------------------------------
+- **src/main/java**: Where our actual application code lives.
+    - `GewaApplication.java`: **The Engine**. The entry point containing the `main` method that starts the Spring Boot application. Annotated with `@SpringBootApplication`.
+- **src/test/java**: Where our tests live.
+    - `GewaApplicationTests.java`: **The Safety Inspector**. Contains tests to verify the code works without running the full app. Annotated with `@SpringBootTest`.
+
+3. Key Terminologies & Architecture (The Restaurant Analogy)
+------------------------------------------------------------
+- **Entity (The Menu Item)**:
+    - A Java class that maps directly to a database table.
+    - Annotation: `@Entity`
+    - Example: `JewelryItem.java` maps to a `jewelry_item` table.
+    - `@Id` & `@GeneratedValue`: define the primary key (unique ID) for database records.
+
+- **Repository (The Pantry)**:
+    - Interface that handles data access (saving, finding, deleting items).
+    - Extends `JpaRepository`.
+    - *Status: Created (`JewelryRepository.java`).*
+
+- **Service (The Chef)**:
+    - Contains the business logic (e.g., calculating discounts, validating orders).
+    - *Status: Created (`JewelryService.java`).*
+
+- **Controller (The Waiter)**:
+    - Handles incoming HTTP requests from users (e.g., "GET /jewelry").
+    - Calls the Service to get data and returns it to the user.
+    - *Status: Created (`JewelryController.java`).*
+
+4. Tools
+--------
+- **IntelliJ IDEA**: The Kitchen. The environment where we write code, run the server, and debug.
+- **Postman**: A tool to test our API endpoints (URLs) before building a frontend.
+
+5. Progress Log
+---------------
+- [x] Project created.
+- [x] Dependencies updated (Web, JPA, H2).
+- [x] `JewelryItem` Entity created.
+- [x] `JewelryRepository` creation.
+- [x] Service Layer implementation.
+- [x] Controller Layer implementation.
+
+6. Frontend Architecture
+------------------------
+- **Technology**: React (Library for building UIs).
+- **Structure**: Monorepo style.
+    - Backend: Root directory (Spring Boot).
+    - Frontend: `/frontend` directory (React).
+- **Communication**: Frontend talks to Backend via REST API (HTTP requests).
+- **Status**: Scaffold created. Navbar implemented with Home, Add Product, Categories, and Search.
+
+7. Deep Dive: How It All Works (The Flow)
+-----------------------------------------
+1. **The Request**: User opens the website -> React sends a `GET` request to `http://localhost:8080/api/products`.
+2. **The Controller (Waiter)**: `ProductController` receives the request. It doesn't cook; it just shouts to the kitchen: "Hey Service, I need all products!"
+3. **The Service (Chef)**: `ProductService` gets the order. It knows *business rules* (e.g., "Only show in-stock items"). It asks the Pantry: "Repo, give me everything."
+4. **The Repository (Pantry)**: `ProductRepo` talks to the Database. It translates "findAll()" into SQL: `SELECT * FROM product`.
+5. **The Database**: Returns the raw data rows.
+6. **The Return Trip**: Repo -> Service -> Controller -> React (JSON) -> User's Screen.
+
+8. Concepts Clarified
+---------------------
+- **Entity vs Model**: They are often used interchangeably. `Product.java` is an **Entity** because it has `@Entity`. It defines the *shape* of your data. It tells Hibernate: "Create a table with columns `id`, `name`, `price`...".
+- **JpaRepository Magic**: You don't write `findAll()` because `JpaRepository` *already has it*. By extending it, your interface inherits 50+ methods for free! It uses **Reflection** and **Proxies** to generate the SQL for you at runtime.
+- **Chicken & Egg (Data Loading)**:
+    - Problem: Spring tries to run `data.sql` (insert data) *before* Hibernate creates the tables.
+    - Solution: `spring.jpa.defer-datasource-initialization=true`. This forces Spring to wait for Hibernate to finish building the empty tables before trying to fill them.
+- **SpringApplication.run()**: This command boots up the entire universe. It starts the embedded Tomcat server, scans your code for `@Component`s, sets up the database connection, and starts listening for requests on port 8080.
+
+9. Database Deep Dive (H2 vs Production)
+----------------------------------------
+- **What is H2?**: A lightweight, super-fast SQL database written in Java.
+- **How we are using it (In-Memory)**:
+    - URL: `jdbc:h2:mem:gewa`
+    - **Pros**: Zero setup, fast, resets clean every time you restart (great for testing).
+    - **Cons**: **Volatile**. If you stop the app, all data (including new users/orders) is deleted.
+- **The Future (Production)**:
+    - To let users/clients save data permanently, we will switch to **MySQL** or **PostgreSQL**.
+    - **Workflow**:
+        1. Install MySQL Server.
+        2. Change `application.properties` to point to MySQL instead of H2.
+        3. Build an **Admin Panel** in React (Forms) so the client can add products without writing SQL.
+
+
+10. React Data Flow (Lifting State Up)
+--------------------------------------
+- **Scenario**: We want the Search Bar (in Navbar) to filter the Products (in Home).
+- **The Problem**: `Navbar` and `Home` are siblings. They cannot talk to each other directly.
+- **The Solution**: Move the state UP to their parent (`App.jsx`).
+- **The Flow**:
+    1. **User types "Ring"** in `Navbar`.
+    2. **Navbar** calls `onSearch("Ring")` (a function passed down from App).
+    3. **App** (who owns `onSearch`) runs `handleSearch("Ring")`.
+    4. **App** updates its own state: `setKeyword("Ring")`.
+    5. **App** re-renders and passes the new state down to `Home`: `<Home keyword="Ring" />`.
+    6. **Home** sees that its prop `keyword` has changed (thanks to `useEffect([keyword])`).
+    7. **Home** runs the fetch: `GET /api/products/search?keyword=Ring`.
+- **Summary**: Navbar -> (via onSearch) -> App -> (via keyword) -> Home.
+
+
+
+11. Advanced Architecture & Future Roadmap
+------------------------------------------
+
+### A. Project Diagram (The Big Picture)
+We are building a modular system. Here is how the pieces fit:
+
+[ Frontend (React) ]
+       |
+       v
+[ Controllers (The Waiters) ]  <-- You are here
+   /       |        \
+[Product] [Order]  [User]      <-- Different Controllers for different jobs
+   |       |        |
+[Service] [Service][Service]   <-- Business Logic (The Chefs)
+   |       |        |
+[Repo]    [Repo]   [Repo]      <-- Data Access (The Pantry)
+   \       |        /
+    [ Database (H2/MySQL) ]
+
+### B. Why Multiple Controllers?
+- **Separation of Concerns**:
+    - `ProductController`: Manages Inventory (Add/Remove items).
+    - `OrderController`: Manages Transactions (Checkout, Payment).
+    - `UserController`: Manages People (Login, Profile).
+- If we put everything in one file, it becomes unmaintainable.
+
+### C. Entity vs Model vs DTO
+1.  **Entity (`Product.java`)**:
+    - Maps directly to the Database Table.
+    - **Must** have `@Entity`.
+    - Contains "Sensitive" or "Raw" data (e.g., User Password, Database IDs).
+2.  **Model**:
+    - Often used as a synonym for Entity in simple apps.
+    - In complex apps, it might be the "Business Object" used by the Service layer.
+3.  **DTO (Data Transfer Object)**:
+    - **The Delivery Box**.
+    - It is a plain Java class (POJO) with NO logic.
+    - **Purpose**: To carry data between processes safely.
+    - **Example**:
+        - **Entity**: `User` (id, username, password, credit_card).
+        - **DTO**: `UserProfileDTO` (username, avatar).
+        - **Why?**: We copy data from Entity -> DTO before sending it to the Frontend so we don't accidentally leak the password!
+
+### D. The `JewelryItem.java` Mystery
+- **Status**: It is currently **Unused**.
+- **Does it create a table?**: Yes! Because it has `@Entity`, Hibernate creates a `jewelry_item` table on startup.
+- **Is it used?**: No. Your `ProductController`, `Service`, and `Repo` all use `Product.java`. The `jewelry_item` table sits empty.
+- **Action**: You can safely **DELETE** `JewelryItem.java`. It will clean up your database schema.
+
+12. Java Records (Modern DTOs)
+------------------------------
+- **What is a Record?**: Introduced in Java 14/16, it is a special kind of class designed specifically to hold **immutable data**.
+- **Why use it instead of a Class?**
+    - **Conciseness**:
+        - **Class**: You need to write `private final fields`, `Constructor`, `Getters`, `equals()`, `hashCode()`, `toString()`. That's 50 lines of code.
+        - **Record**: `public record User(String name) {}`. That's 1 line. It auto-generates *everything* for you.
+    - **Immutability**: Once you create a Record, you cannot change its data (no Setters). This is perfect for DTOs because a "Response" shouldn't change after it's sent.
+- **Syntax**:
+    - It uses `()` instead of `{}` for fields because it looks like a Constructor.
+    - The `{}` block is optional (only needed if you want custom validation).

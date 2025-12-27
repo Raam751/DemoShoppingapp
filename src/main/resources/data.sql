@@ -1,0 +1,7 @@
+INSERT INTO product (name, description, brand, price, category, product_available, stock_quantity, image_url) VALUES
+('haar', 'golden necklace with transparent stones', 'JLR', 999.00, 'Necklace', true, 5, 'https://silverpalace.in/uploads/products/img-14663896761b045d2c11ab3.87697156.jpg'),
+('jhumka', 'earrings with beautiful design', 'JLR', 399.00, 'Earrings', true, 5, 'https://encrypted-tbn3.gstatic.com/shopping?q=tbn:ANd9GcT5Fw_hJAngN3QIhcFqZ6qskmlsVaGmg_dfjI1oqljQ69oP5WJ0WLRj5E_yYJOKSi55ntDcxXnHjmSDLPuNC2zwxUDnGjosLYHU_wkPEOH6apOh6WmIxFWk1w'),
+('pendant', 'pendant with an attractive look', 'JLR', 699.00, 'Pendant', true, 5, 'https://images.unsplash.com/photo-1631965004544-1762fc696476?fm=jpg&q=60&w=3000&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxzZWFyY2h8NHx8cGVuZGFudHxlbnwwfHwwfHx8MA%3D%3D'),
+('chain', 'chain with an attractive look', 'JLR', 299.00, 'Chain', true, 5, 'https://d25g9z9s77rn4i.cloudfront.net/uploads/product/450/1734095167_0d305023c06ae4d43ca7.jpg'),
+('ring', 'ring with a beautiful colour', 'JLR', 199.00, 'Ring', true, 5, 'https://www.candere.com/media/jewellery/images/C004016__1.jpeg'),
+('bracelet', 'bracelet with a sleek design', 'JLR', 499.00, 'Bracelet', true, 5, 'https://t4.ftcdn.net/jpg/01/26/55/57/360_F_126555735_I1iCjWan0jDZz6iPKfVtrdX9mswmnJnw.jpg');
