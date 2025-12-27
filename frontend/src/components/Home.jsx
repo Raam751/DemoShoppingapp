@@ -4,6 +4,9 @@ import './Home.css';
 
 import { useCart } from '../context/CartContext';
 
+import { useCart } from '../context/CartContext';
+import { API_URL } from '../config';
+
 const Home = ({ keyword }) => {
     const { addToCart } = useCart();
     const [products, setProducts] = useState([]);
@@ -12,8 +15,8 @@ const Home = ({ keyword }) => {
 
     useEffect(() => {
         const url = keyword
-            ? `http://localhost:8080/api/products/search?keyword=${keyword}`
-            : 'http://localhost:8080/api/products';
+            ? `${API_URL}/api/products/search?keyword=${keyword}`
+            : `${API_URL}/api/products`;
 
         fetch(url)
             .then(response => {

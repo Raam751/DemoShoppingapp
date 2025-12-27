@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useParams, Link, useNavigate } from 'react-router-dom';
 import './ProductDetails.css';
+import { API_URL } from '../config';
 
 const ProductDetails = () => {
     const { id } = useParams();
@@ -10,7 +11,7 @@ const ProductDetails = () => {
     const [error, setError] = useState(null);
 
     useEffect(() => {
-        fetch(`http://localhost:8080/api/products/${id}`)
+        fetch(`${API_URL}/api/products/${id}`)
             .then(response => {
                 if (!response.ok) {
                     throw new Error('Product not found');
@@ -31,7 +32,7 @@ const ProductDetails = () => {
     const handleDelete = async () => {
         if (window.confirm("Are you sure you want to delete this product?")) {
             try {
-                const response = await fetch(`http://localhost:8080/api/products/${id}`, {
+                const response = await fetch(`${API_URL}/api/products/${id}`, {
                     method: 'DELETE'
                 });
                 if (response.ok) {

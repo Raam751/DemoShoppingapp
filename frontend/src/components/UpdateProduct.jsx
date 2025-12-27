@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import './AddProduct.css'; // Reuse styles
+import { API_URL } from '../config';
 
 const UpdateProduct = () => {
     const { id } = useParams();
@@ -18,7 +19,7 @@ const UpdateProduct = () => {
     const [preview, setPreview] = useState(null);
 
     useEffect(() => {
-        fetch(`http://localhost:8080/api/products/${id}`)
+        fetch(`${API_URL}/api/products/${id}`)
             .then(res => res.json())
             .then(data => {
                 setProduct(data);
@@ -50,7 +51,7 @@ const UpdateProduct = () => {
         formData.append('product', new Blob([JSON.stringify(product)], { type: 'application/json' }));
 
         try {
-            const response = await fetch(`http://localhost:8080/api/products/${id}`, {
+            const response = await fetch(`${API_URL}/api/products/${id}`, {
                 method: 'PUT',
                 body: formData
             });

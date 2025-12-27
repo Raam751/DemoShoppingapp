@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import './AddProduct.css';
+import { API_URL } from '../config';
 
 const AddProduct = () => {
     const [product, setProduct] = useState({
@@ -35,7 +36,7 @@ const AddProduct = () => {
         formData.append('product', new Blob([JSON.stringify(product)], { type: 'application/json' }));
 
         try {
-            const response = await fetch('http://localhost:8080/api/products', {
+            const response = await fetch(`${API_URL}/api/products`, {
                 method: 'POST',
                 body: formData
             });
