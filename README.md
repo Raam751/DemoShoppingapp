@@ -54,7 +54,7 @@ npm run dev
 
 To manage products (Add/Update/Delete), click the **Lock Icon (🔒)** in the Navbar.
 
-*   **Password**: `admin123`
+*   **Password**: (you thought I am gonna put it here, right?) gotch!!😁
 
 ## 📱 Mobile View
 The application is fully responsive. Open it on your phone or use the browser's "Device Toolbar" to test mobile layouts.
