@@ -4,7 +4,6 @@ import './Home.css';
 
 import { useCart } from '../context/CartContext';
 
-import { useCart } from '../context/CartContext';
 import { API_URL } from '../config';
 
 const Home = ({ keyword }) => {
